@@ -1,0 +1,176 @@
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    background-color: #25262c;
+    color: #e6e6e6;
+    font-family: monospace;
+}
+.wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+    min-width: 340px;
+    min-height: 280px;
+    border: solid 1px #3b3c46;
+    border-radius: 0.5rem;
+    background-color: #d1d2da;  /* light */
+    background-color: #1d1d22;  /* dark */
+    /* position: relative; */
+    
+}
+button {
+    all: unset;
+    width: fit-content;
+    padding: 0.15rem 0.75rem;
+    border-radius: 0.25rem;
+    background-color: #e6e6e6;
+    color:#1d1d22;
+    transition: all 0.3s ease;
+}
+
+
+/* onboarding */
+.onboarding .info-text {
+    max-width: 90%;
+    text-wrap: balance;
+    text-align: center;
+}
+.onboarding {
+    position: relative;
+    overflow: hidden;
+}
+.onboarding > * {
+    z-index: 2;
+}
+
+
+/* playing */
+.playing.card {
+    display: flex;
+    flex-direction: column;
+    min-height: fit-content;
+    min-width: fit-content;
+    max-width: 75%;
+    padding: 1rem;
+}
+.pc-header {
+    height: fit-content;
+    margin-right: auto;
+}
+.grid-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: auto;
+    gap: 1rem;
+    padding: 1rem;
+}
+.grid-item {
+    width: 80px;
+    height: 80px;
+    background-color: #915479;
+    border-radius: 0.25rem;
+    justify-self: center;
+    transition: all 0.3s;
+}
+
+
+/* finish card */
+.finish.card {
+    position: relative;
+}
+.time-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.records-div {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    position: absolute;
+    padding: 0.25rem;
+    top: 0.5rem;
+    right: 0.5rem;
+    border-radius: 0.5rem;
+    border: solid 1px #3b3c46;
+}
+.records-div h4 {
+    font-weight: 900;
+}
+
+
+
+footer {
+    position: fixed;
+    bottom: 0.25rem;
+    left: 50%;
+    translate: -50%;
+}
+footer a {
+    text-decoration: none;
+    color:#d1d2da
+}
+
+
+
+/* js/interactive */
+.onboarding::after {
+    content: "o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
+    " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o";
+    position: absolute;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    z-index: 1;
+    font-size: 2rem;
+    color:#232327;
+    pointer-events: none;
+}
+footer a:hover {
+    text-decoration: underline;
+    color:#915479;
+}
+button:hover {
+    cursor: pointer;
+    background-color: #915479;
+    color:#d1d2da;
+}
+.grid-item:hover {
+    cursor: pointer;
+    background-color:#a16c8c;
+}
+.hide {
+    display: none !important;
+}
+.flipped {
+    background-color:#ceb5c4;
+}
+.matched {
+    background-color: #3b3c46;
+}
+.matched:hover {
+    background-color: #474752;
+    cursor: default;
+}
