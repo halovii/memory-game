@@ -16,11 +16,23 @@ let gridItemsArr = [];
 const recordsDiv = document.querySelector('.records-div');
 recordsDiv.classList.add('hide'); // hide records div by default
 
-
 // hide playing and finish screens by default
 onboarding.classList.remove('hide');
 playing.classList.add('hide');
 finish.classList.add('hide');
+
+// colour obj
+const colourObj = {
+    1: {colour: "#dfb4b4"},
+    2: {colour: "#cebfa8"},
+    3: {colour: "#cacea8"},
+    4: {colour: "#a5c294"},
+    5: {colour: "#a8ccce"},
+    6: {colour: "#b7a8ce"},
+    7: {colour: "#c2a8ce"},
+    8: {colour: "#cea8c1"},
+
+};
 
 
 
@@ -58,6 +70,7 @@ function shuffleArr(array) {
 };
 
 
+
 function togglePlaying() {
     console.log("DB: togglePlaying()");
 
@@ -67,6 +80,7 @@ function togglePlaying() {
 
     let score = 0;
     let values = [];
+    let idNum = 0;
 
     // create 16 grid items, each with a random num between 1-8 2x
     for (let i = 1; i <= 8; i++) {
@@ -75,7 +89,7 @@ function togglePlaying() {
 
     shuffleArr(values); // shuffle nums
 
-    gridItemsArr = [];
+    let gridItemsArr = [];
     values.forEach(num => {
         const gridItem = document.createElement('div');
         gridItem.classList.add('grid-item');
@@ -84,13 +98,12 @@ function togglePlaying() {
         gridContainer.appendChild(gridItem);
         gridItemsArr.push(gridItem); //? use to reset board, check cards, etc
 
+
         // for debug, add nums to grid items
-        const p = document.createElement('p');
-        p.textContent = num;
-        gridItem.appendChild(p);
-
+        // const p = document.createElement('p');
+        // p.textContent = num;
+        // gridItem.appendChild(p);
     });
-
 
     flipFunctionality();
 };
@@ -104,8 +117,9 @@ function updateScore(score) {
 };
 
 function checkScore(score) {
-    if (score === 16) {
-        console.log("DB: score: 16");
+    console.log("DB: checkScore()");
+    if (score === 8) {
+        console.log("all cards flipped :p");
         toggleFinish();
     };
 };
@@ -124,7 +138,24 @@ function reset() {
     onboarding.classList.remove('hide');
     finish.classList.add('hide');
 
+    gridContainer.replaceChildren = "";
 }
+
+// function updateCardsColour(gridItems) {
+//     gridItems.forEach(item => {
+//         // default card bg
+//         item.style.backgroundColor = "#915479";
+
+//         // if card is flipped, show dif colour
+//         if (item.classList.contains('flipped')) {
+//             const num = item.dataset.dataNum;
+//             const colour = colourObj[num].colour
+//             console.log(colour);
+//             item.style.backgroundColor = colour;
+//         }
+//     });
+// }
+
 
 
 function flipFunctionality() {
@@ -134,60 +165,97 @@ function flipFunctionality() {
     let allFlippedCards = [];
     
     let score = 0;
-
+    
     // loop all grid items, get the clicked item
     const gridItems = document.querySelectorAll('.grid-item');
+
+    // remove all previous games grid items
+    gridItems.forEach(item => {
+        if (item.classList.contains('flipped')) {
+            gridContainer.removeChild(item);
+        }
+    });
+    
+
     gridItems.forEach(item => {
         item.addEventListener('click', e => {
-            const targetItem = e.currentTarget;
+            // add dif colours to pairs
+            const num = item.dataset.dataNum;
+            const colour = colourObj[num].colour
+            item.style.setProperty('--item-colour', colourObj[num].colour)
             
+            const targetItem = e.currentTarget;
+
+            // prevent same card double click
+            if (targetItem === currFlipped[0]) {
+                return;
+            };
+
+            // add flipped css state to card
+            targetItem.classList.add('flipped');
+            
+
+            // add datanum and card to arrays
             currFlippedNums.push(targetItem.dataset.dataNum); 
             currFlipped.push(targetItem); 
+            console.log("currently flipped nums: ", currFlippedNums); // debug
 
-
-            console.log("currently flipped NUMS arr: ", currFlippedNums); // debug
-
-            if (currFlippedNums[0] === currFlippedNums[1]) {
-                console.log(`CARDS MATCH ☆*: .｡. o(≧▽≦)o .｡.:*☆ ${currFlippedNums[0], currFlippedNums[1]}`);
-
-                currFlipped.forEach(card => card.classList.add('matched')); // add matched class
-                allFlippedCards.push(currFlipped[0], currFlipped[1]); // push the matched cards to allFlippedCards array
-
-                // inc score when theres a match :pg
-                score += 1;
-                updateScore(score);
-                //checkScore(score); //? also does same as below, figure out which to use
-
-                console.log(allFlippedCards.length);
-                if (allFlippedCards.length == 16) {
-                    console.log("all cards flipped :p");
-                    toggleFinish();
-                }
-            };
-            
-            // clear array if theres 2 cards storesd
-            if (currFlippedNums.length == 2) {
+            if (currFlipped.length === 2) { 
+                
                 // check if cards match, if yes, yahoo, if no, baka!!!
-                currFlippedNums = [];
-                currFlipped = [];
-            };
-            
-        
-            //! fix
-            // bug where u can click on the same card 2x and it counts as a match
-            // score inc and update
+                if (currFlipped[0].dataset.dataNum === currFlipped[1].dataset.dataNum) { 
 
-            //! update score + 1 ------- //! fix this, only update score by 1 every click, but onyl 2 licks can happen at an interval, since its flip 2, check for match, yes> no> bakaaaaa
-            // score += 1;
-            // updateScore(score);
-            // checkScore(score);
+                    // debug log :p
+                    console.log(`CARDS MATCH ☆*: .｡. o(≧▽≦)o .｡.:*☆ ${currFlippedNums[0], currFlippedNums[1]}`); // debug
+
+                    // add matched class and add cards to allFlippedCards
+                    currFlipped.forEach(card => card.classList.add('matched'));
+                    allFlippedCards.push(currFlipped[0], currFlipped[1]);
+
+                    // inc score, update it and check if it was the final match
+                    score += 1;
+                    updateScore(score);
+                    checkScore(score);
+
+                } else {
+                    console.log("DB: no match");
+                    setTimeout(() => {
+                        currFlipped.forEach(card =>
+                            card.classList.remove('flipped')
+                        );
+                        currFlippedNums = [];
+                        currFlipped = [];
+
+                    }, 1000);
+                }
+                // // empty arrays
+                // currFlippedNums = [];
+                // currFlipped = [];
+            } 
         });
     });
-
 };
 
 //! double sides element
 // if flipped show: 
-    // img/item/icon something
+    // img/item/icon/colour something
 // if not (default unflipped) show
     // cutie bg/gradient something
+
+
+//! to do
+// fix bug where u can click many times, curr flipped cards not being emptied me thinks, //? nope not that, something else
+// also maybe add a short delay when u get a match before toggling match css state, so user sees what colour matched
+// also maybe a cute popup text saying "match!" and disable any clicks anywhere while that text is up
+// add icon or something to cards
+//* flip animation?
+    //? fix issue where flip doesnt show on 2nd clicked card
+//* update instructions on onboarding pg
+// timer
+    // could also do timer in top right or something?? to show user
+// local storage record keeping
+    // if doing local storage bob, add some input area for user's name :p
+
+
+//! last to do:
+// update read me

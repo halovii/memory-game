@@ -22,7 +22,7 @@ html, body {
     align-items: center;
     padding: 1rem;
     gap: 1rem;
-    min-width: 340px;
+    min-width: 460px;
     min-height: 280px;
     border: solid 1px #3b3c46;
     border-radius: 0.5rem;
@@ -49,6 +49,7 @@ button {
     text-align: center;
 }
 .onboarding {
+    max-width: 40%;
     position: relative;
     overflow: hidden;
 }
@@ -84,7 +85,7 @@ button {
     background-color: #915479;
     border-radius: 0.25rem;
     justify-self: center;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
 
@@ -159,13 +160,15 @@ button:hover {
 }
 .grid-item:hover {
     cursor: pointer;
-    background-color:#a16c8c;
+    opacity: 0.85;
 }
 .hide {
     display: none !important;
 }
 .flipped {
-    background-color:#ceb5c4;
+    transform: rotateY(180deg);
+    background: var(--item-colour);
+    /* background-color:#ceb5c4; */
 }
 .matched {
     background-color: #3b3c46;
@@ -173,4 +176,7 @@ button:hover {
 .matched:hover {
     background-color: #474752;
     cursor: default;
+}
+.disabled {
+    pointer-events: none;
 }
