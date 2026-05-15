@@ -272,5 +272,12 @@ function flipFunctionality() {
     // if doing local storage bob, add some input area for user's name :p
 
 
+//!!! new bugs
+// reset function doesnt reset score
+// soometimes cards are flipped or not reset back to default
+// random extra card was there once
+// match popup shows on restart
+
+
 //! last to do:
 // update read me

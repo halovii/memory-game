@@ -15,6 +15,7 @@ vanilla html, css, js memory matching game :p
 - make finish screen cuter
 - local storage record system where user can input a name at the beginning of each game and work towards the best time
 - icon or images rather than just colours on the cards
+- a leaderboard or star system based on times, eg, <30s: platinum, 30-35s: gold, etc...
 
 ## notes
 happy with this project :p
