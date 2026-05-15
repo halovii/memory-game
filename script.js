@@ -8,9 +8,22 @@ const onboarding = document.querySelector('.onboarding');
 const playing = document.querySelector('.playing');
 const finish = document.querySelector('.finish');
 
+const pcHeader = document.querySelector('.pc-header');
+pcHeader.classList.add('hide');
+
+// timer
+let startTime;
+let timerInterval;
+let finalTime;
+const fcTimeLabel = document.querySelector('.fc-time-label');
+
 // grid 
 const gridContainer = document.querySelector('.grid-container');
 let gridItemsArr = [];
+
+// hide match popup by default
+const matchPopup = document.querySelector('.match-popup');
+matchPopup.classList.add('hide');
 
 // finish pg
 const recordsDiv = document.querySelector('.records-div');
@@ -23,45 +36,36 @@ finish.classList.add('hide');
 
 // colour obj
 const colourObj = {
-    1: {colour: "#dfb4b4"},
-    2: {colour: "#cebfa8"},
-    3: {colour: "#cacea8"},
-    4: {colour: "#a5c294"},
-    5: {colour: "#a8ccce"},
-    6: {colour: "#b7a8ce"},
-    7: {colour: "#c2a8ce"},
-    8: {colour: "#cea8c1"},
-
+    1: {colour: "#eea6a6"},
+    2: {colour: "#f0bf76"},
+    3: {colour: "#e5ebb7"},
+    4: {colour: "#98e485"},
+    5: {colour: "#83f3db"},
+    6: {colour: "#7cafdf"},
+    7: {colour: "#b19de9"},
+    8: {colour: "#d892c6"},
 };
 
 
-
-// when document loads, call init function
+// when pg loads, call init function
 document.addEventListener('DOMContentLoaded', init);
 
-
+// initialise start, event delegation, listen for btn clicks
 function init() {
-    console.log("DB: init()");
-
-    // event delegation, listen for btn clicks
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
-            console.log(btn.className, "clicked"); // debug
-
             if (btn.className === "start-btn") {
                 togglePlaying();
-            }
-
+            };
             if (btn.className === "restart-btn") {
                 reset();
-            }
+            };
         });
     });
 };
 
 function shuffleArr(array) {
     //? fisher yates randomise order method :p
-    console.log("DB: shuffleArr()");
     for (let j = array.length - 1; j > 0; j--) {
         const k = Math.floor(Math.random() * (j + 1));
         [array[j], array[k]] = [array[k], array[j]];
@@ -72,11 +76,10 @@ function shuffleArr(array) {
 
 
 function togglePlaying() {
-    console.log("DB: togglePlaying()");
-
-    // show/hide screens
+    // show/hide screens, add score and timer labels
     onboarding.classList.add('hide');
     playing.classList.remove('hide');
+    pcHeader.classList.remove('hide'); 
 
     let score = 0;
     let values = [];
@@ -98,40 +101,61 @@ function togglePlaying() {
         gridContainer.appendChild(gridItem);
         gridItemsArr.push(gridItem); //? use to reset board, check cards, etc
 
-
-        // for debug, add nums to grid items
-        // const p = document.createElement('p');
-        // p.textContent = num;
-        // gridItem.appendChild(p);
     });
 
+    // start timer
+    startTimer();
+    // call functionality
     flipFunctionality();
 };
 
 
 
 function updateScore(score) {
-    // console.log("DB updateScore()"); // debug
     const scoreLabel = document.querySelector('.score-label');
     scoreLabel.textContent = `score: ${score}`
 };
 
+// timer
+function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 100);
+};
+
+function updateTimer() {
+    const elapsed = Date.now() - startTime;
+    const secs = (elapsed / 1000).toFixed(1);
+
+    const timerLabel = document.querySelector('.timer-label');
+    timerLabel.textContent = `time: ${secs}`;
+
+    finalTime = timerLabel.textContent;
+};
+
+function stopTimer() {
+    clearInterval(timerInterval);
+};
+
 function checkScore(score) {
-    console.log("DB: checkScore()");
     if (score === 8) {
-        console.log("all cards flipped :p");
-        toggleFinish();
+        stopTimer(); // stop timer
+
+        // wait .4s before toggling finish pg
+        setTimeout(() => {
+            toggleFinish();
+        }, 400);
     };
 };
 
 function toggleFinish() {
-    console.log("DB: toggleFinish()");
+    // hide other screens/ show finish screen
     playing.classList.add('hide');
     finish.classList.remove('hide');
+    // update time label
+    fcTimeLabel.textContent = finalTime;
 };
 
 function reset() {
-    console.log("DB: reset()");
     gridItemsArr = [];
 
     // toggle screens
@@ -141,25 +165,9 @@ function reset() {
     gridContainer.replaceChildren = "";
 }
 
-// function updateCardsColour(gridItems) {
-//     gridItems.forEach(item => {
-//         // default card bg
-//         item.style.backgroundColor = "#915479";
-
-//         // if card is flipped, show dif colour
-//         if (item.classList.contains('flipped')) {
-//             const num = item.dataset.dataNum;
-//             const colour = colourObj[num].colour
-//             console.log(colour);
-//             item.style.backgroundColor = colour;
-//         }
-//     });
-// }
-
 
 
 function flipFunctionality() {
-    console.log("DB: flipFunctionality()"); // debug
     let currFlippedNums = [];
     let currFlipped = [];
     let allFlippedCards = [];
@@ -177,8 +185,12 @@ function flipFunctionality() {
     });
     
 
+    let canClick = true;
+
     gridItems.forEach(item => {
         item.addEventListener('click', e => {
+            if (!canClick) return;
+
             // add dif colours to pairs
             const num = item.dataset.dataNum;
             const colour = colourObj[num].colour
@@ -187,30 +199,41 @@ function flipFunctionality() {
             const targetItem = e.currentTarget;
 
             // prevent same card double click
-            if (targetItem === currFlipped[0]) {
-                return;
-            };
+            if (targetItem === currFlipped[0]) return;
 
             // add flipped css state to card
             targetItem.classList.add('flipped');
             
-
             // add datanum and card to arrays
             currFlippedNums.push(targetItem.dataset.dataNum); 
             currFlipped.push(targetItem); 
-            console.log("currently flipped nums: ", currFlippedNums); // debug
+            // console.log("currently flipped nums: ", currFlippedNums); // debug
 
             if (currFlipped.length === 2) { 
-                
+                canClick = false;
                 // check if cards match, if yes, yahoo, if no, baka!!!
                 if (currFlipped[0].dataset.dataNum === currFlipped[1].dataset.dataNum) { 
 
-                    // debug log :p
                     console.log(`CARDS MATCH ☆*: .｡. o(≧▽≦)o .｡.:*☆ ${currFlippedNums[0], currFlippedNums[1]}`); // debug
 
-                    // add matched class and add cards to allFlippedCards
-                    currFlipped.forEach(card => card.classList.add('matched'));
-                    allFlippedCards.push(currFlipped[0], currFlipped[1]);
+                    // if cards match wait a tinsy before toggling matched state
+                    setTimeout(() => {
+                        // add matched class and add cards to allFlippedCards
+                        currFlipped.forEach(card => card.classList.add('matched'));
+                        allFlippedCards.push(currFlipped[0], currFlipped[1]);
+                        
+                        // do match popup animation
+                        matchPopup.classList.remove('hide');
+                        matchPopup.classList.add('animate');
+
+                        matchPopup.addEventListener('animationend', () =>{
+                            matchPopup.classList.remove('animate');
+                            matchPopup.classList.add('hide');
+                        })
+    
+                        currFlipped = [];
+                        canClick = true;
+                    }, 400);
 
                     // inc score, update it and check if it was the final match
                     score += 1;
@@ -218,41 +241,33 @@ function flipFunctionality() {
                     checkScore(score);
 
                 } else {
-                    console.log("DB: no match");
                     setTimeout(() => {
                         currFlipped.forEach(card =>
                             card.classList.remove('flipped')
                         );
                         currFlippedNums = [];
                         currFlipped = [];
+                        canClick = true;
 
                     }, 1000);
                 }
-                // // empty arrays
-                // currFlippedNums = [];
-                // currFlipped = [];
             } 
         });
     });
 };
 
-//! double sides element
-// if flipped show: 
-    // img/item/icon/colour something
-// if not (default unflipped) show
-    // cutie bg/gradient something
-
 
 //! to do
-// fix bug where u can click many times, curr flipped cards not being emptied me thinks, //? nope not that, something else
-// also maybe add a short delay when u get a match before toggling match css state, so user sees what colour matched
-// also maybe a cute popup text saying "match!" and disable any clicks anywhere while that text is up
+//* fix bug where u can click many times, curr flipped cards not being emptied me thinks, //? nope not that, something else
+//* also maybe add a short delay when u get a match before toggling match css state, so user sees what colour matched
+//* also maybe a cute popup text saying "match!" 
+            //? disable any clicks anywhere while that text is up
 // add icon or something to cards
 //* flip animation?
-    //? fix issue where flip doesnt show on 2nd clicked card
+//*  fix issue where flip doesnt show on 2nd clicked card
 //* update instructions on onboarding pg
-// timer
-    // could also do timer in top right or something?? to show user
+//* timer
+    //* could also do timer in top right or something?? to show user
 // local storage record keeping
     // if doing local storage bob, add some input area for user's name :p
 
