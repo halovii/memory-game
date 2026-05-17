@@ -11,11 +11,16 @@ const finish = document.querySelector('.finish');
 const pcHeader = document.querySelector('.pc-header');
 pcHeader.classList.add('hide');
 
+const inputName = document.getElementById('name');
+const inputLabel = document.getElementById('name-label')
+
 // timer
 let startTime;
 let timerInterval;
 let finalTime;
 const fcTimeLabel = document.querySelector('.fc-time-label');
+
+let score = 0;
 
 // grid 
 const gridContainer = document.querySelector('.grid-container');
@@ -28,6 +33,8 @@ matchPopup.classList.add('hide');
 // finish pg
 const recordsDiv = document.querySelector('.records-div');
 recordsDiv.classList.add('hide'); // hide records div by default
+const recordsLabel = document.querySelector('.records-label');
+let records = [];
 
 // hide playing and finish screens by default
 onboarding.classList.remove('hide');
@@ -55,7 +62,16 @@ function init() {
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             if (btn.className === "start-btn") {
-                togglePlaying();
+                if (inputName.value) { // if theres any value in name input field
+                    togglePlaying();
+                } else { // show invalid
+                    inputName.style.borderColor = "#c95656";
+                    inputLabel.style.color = "#c95656";
+                    inputName.addEventListener('input', () => {
+                        inputName.style.borderColor = "#e6e6e6";
+                        inputLabel.style.color = "#e6e6e6";
+                    });
+                }
             };
             if (btn.className === "restart-btn") {
                 reset();
@@ -85,6 +101,8 @@ function togglePlaying() {
     let values = [];
     let idNum = 0;
 
+    updateScore(score);
+
     // create 16 grid items, each with a random num between 1-8 2x
     for (let i = 1; i <= 8; i++) {
         values.push(i, i);
@@ -109,6 +127,43 @@ function togglePlaying() {
     flipFunctionality();
 };
 
+function updateRecords() {
+    console.log("updateRecords()");
+    recordsDiv.classList.remove('hide');
+
+    // create a new record and update UI
+    createRecord();
+};
+
+
+
+//! dont think update records sort time is runnign at right time bc seconds order is wronggg
+
+
+
+function createRecord() {
+    let recordName = inputName.value;
+    let recordTime = updateTimer(); // get final time
+
+    
+    records.push({user: recordName, time: recordTime}); // add record info as an obj
+    console.log("DB: createRecord() values: ", recordName, ":", recordTime); // debug
+    
+    sortTimes(); //  sort records by shortest to longest time
+
+    let clone = recordsLabel.cloneNode(true);
+    clone.textContent = `${recordName} : ${recordTime}`
+    recordsDiv.appendChild(clone);
+};
+
+function sortTimes() {
+    console.log("checkTimes()");
+
+    records.sort((a, b) => a.time - a.time);
+    console.log("sorted records:", records);
+};
+
+
 
 
 function updateScore(score) {
@@ -128,8 +183,8 @@ function updateTimer() {
 
     const timerLabel = document.querySelector('.timer-label');
     timerLabel.textContent = `time: ${secs}`;
-
-    finalTime = timerLabel.textContent;
+    
+    return finalTime = secs;
 };
 
 function stopTimer() {
@@ -151,6 +206,9 @@ function toggleFinish() {
     // hide other screens/ show finish screen
     playing.classList.add('hide');
     finish.classList.remove('hide');
+
+    updateRecords();
+
     // update time label
     fcTimeLabel.textContent = finalTime;
 };
@@ -161,8 +219,15 @@ function reset() {
     // toggle screens
     onboarding.classList.remove('hide');
     finish.classList.add('hide');
+    matchPopup.classList.add('hide');
 
     gridContainer.replaceChildren = "";
+
+    score = 0;
+    canClick = false;
+
+    inputName.style.borderColor = "#e6e6e6";
+    inputLabel.style.color = "#e6e6e6";
 }
 
 
@@ -171,8 +236,6 @@ function flipFunctionality() {
     let currFlippedNums = [];
     let currFlipped = [];
     let allFlippedCards = [];
-    
-    let score = 0;
     
     // loop all grid items, get the clicked item
     const gridItems = document.querySelectorAll('.grid-item');
@@ -184,7 +247,6 @@ function flipFunctionality() {
         }
     });
     
-
     let canClick = true;
 
     gridItems.forEach(item => {
@@ -273,10 +335,14 @@ function flipFunctionality() {
 
 
 //!!! new bugs
-// reset function doesnt reset score
+//* reset function doesnt reset score
 // soometimes cards are flipped or not reset back to default
 // random extra card was there once
-// match popup shows on restart
+//? match popup shows on restart
+
+
+// https://www.freecodecamp.org/news/use-local-storage-in-modern-applications/
+// https://www.w3schools.com/jsref/prop_win_localstorage.asp
 
 
 //! last to do:

@@ -55,6 +55,12 @@ button {
 .onboarding > * {
     z-index: 2;
 }
+.input-div input {
+    all: unset;
+    max-width: 100px;
+    border-bottom: #d1d2da solid 1px;
+}
+
 
 
 /* playing */
@@ -100,7 +106,13 @@ button {
 
 /* finish card */
 .finish.card {
+    gap: 1rem;
+    max-width: 40%;
     position: relative;
+    overflow: hidden;
+}
+.finish > * {
+    z-index: 2;
 }
 .fc-header, .restart-btn {
     margin: 0.75rem;
@@ -143,7 +155,7 @@ footer a {
 
 
 /* js/interactive */
-.onboarding::after {
+.onboarding::after, .finish::after {
     content: "o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
     " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
     " o((>ω< ))o  o((>ω< ))o  o((>ω< ))o"
@@ -194,7 +206,7 @@ button:hover {
     pointer-events: none;
 }
 .animate {
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-name: popUp;
     animation-timing-function: ease;
 }
@@ -203,11 +215,11 @@ button:hover {
         transform: scale(0.75);
         opacity: 0;
     }
-    25% {
+    10% {
         transform: scale(1.0);
         opacity: 1;
     }
-    75% {
+    80% {
         transform: scale(1.0);
         opacity: 1;
     }
