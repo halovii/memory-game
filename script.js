@@ -128,7 +128,6 @@ function togglePlaying() {
 };
 
 function updateRecords() {
-    console.log("updateRecords()");
     recordsDiv.classList.remove('hide');
 
     // create a new record and update UI
@@ -137,32 +136,31 @@ function updateRecords() {
 
 
 
-//! dont think update records sort time is runnign at right time bc seconds order is wronggg
-
-
-
 function createRecord() {
-    let recordName = inputName.value;
-    let recordTime = updateTimer(); // get final time
+    // get player name and final timer value (in ms)
+    let playerName = inputName.value;
+    let playerTime= updateTimer(); // get final time
+    playerTime = playerTime * 1000; // convert to ms
 
-    
-    records.push({user: recordName, time: recordTime}); // add record info as an obj
-    console.log("DB: createRecord() values: ", recordName, ":", recordTime); // debug
-    
-    sortTimes(); //  sort records by shortest to longest time
+    // new record obj
+    records.push({user: playerName, time: playerTime});
+    console.log("player info: ", playerName, ":", playerTime);
 
-    let clone = recordsLabel.cloneNode(true);
-    clone.textContent = `${recordName} : ${recordTime}`
-    recordsDiv.appendChild(clone);
+    // sort records arr
+    records.sort((a, b) => a.time - b.time);
+
+    // clear curr records display
+    recordsDiv.replaceChildren();
+
+    // loop sorted records arr > clone p > convert to readble time > update text > append
+    records.forEach(record => {
+        let clone = recordsLabel.cloneNode(true);
+        playerTime = record.time / 1000; // convert back to sec
+        console.log("time info: ", playerTime, ":", record.time / 1000);
+        clone.textContent = `${record.user} : ${playerTime}`;
+        recordsDiv.appendChild(clone);
+    });
 };
-
-function sortTimes() {
-    console.log("checkTimes()");
-
-    records.sort((a, b) => a.time - a.time);
-    console.log("sorted records:", records);
-};
-
 
 
 
@@ -317,33 +315,3 @@ function flipFunctionality() {
         });
     });
 };
-
-
-//! to do
-//* fix bug where u can click many times, curr flipped cards not being emptied me thinks, //? nope not that, something else
-//* also maybe add a short delay when u get a match before toggling match css state, so user sees what colour matched
-//* also maybe a cute popup text saying "match!" 
-            //? disable any clicks anywhere while that text is up
-// add icon or something to cards
-//* flip animation?
-//*  fix issue where flip doesnt show on 2nd clicked card
-//* update instructions on onboarding pg
-//* timer
-    //* could also do timer in top right or something?? to show user
-// local storage record keeping
-    // if doing local storage bob, add some input area for user's name :p
-
-
-//!!! new bugs
-//* reset function doesnt reset score
-// soometimes cards are flipped or not reset back to default
-// random extra card was there once
-//? match popup shows on restart
-
-
-// https://www.freecodecamp.org/news/use-local-storage-in-modern-applications/
-// https://www.w3schools.com/jsref/prop_win_localstorage.asp
-
-
-//! last to do:
-// update read me
