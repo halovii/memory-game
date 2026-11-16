@@ -139,7 +139,7 @@ function updateRecords() {
 function createRecord() {
     // get player name and final timer value (in ms)
     let playerName = inputName.value;
-    let playerTime= updateTimer(); // get final time
+    let playerTime = updateTimer(); // get final time
     playerTime = playerTime * 1000; // convert to ms
 
     // new record obj
@@ -201,7 +201,7 @@ function checkScore(score) {
 };
 
 function toggleFinish() {
-    // hide other screens/ show finish screen
+    // hide other screens/show finish screen
     playing.classList.add('hide');
     finish.classList.remove('hide');
 
