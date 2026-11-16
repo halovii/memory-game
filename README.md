@@ -3,7 +3,7 @@
 A vanilla html, css and js stylised pastel colour memory matching game!  
 [Play live here!](https://halovii.github.io/memory-game/)  
 
-### img
+### preview
 ![game states](./img/gameSS.png)
 ![gameplay preview gif](./img/gamegif.gif)  
 
